@@ -20,6 +20,7 @@ class GoogleSheetsApi {
 
   final gsheets = GSheets(_credentials); //init gsheets
   static Worksheet? _worksheet;
+  static bool loading = true;
 
 // var to keep track of (show data)
   static int numberOfNotes = 0;
@@ -54,9 +55,10 @@ class GoogleSheetsApi {
         currentNotes.add(newNote);
       }
     }
+    loading = false;
   }
-
   //insert a new note
+
   static Future insert(String note) async {
     if (_worksheet == null) return;
     numberOfNotes++;

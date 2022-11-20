@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:note_app_gsheet/google_sheets_api.dart';
+import 'package:note_app_gsheet/loading_circle.dart';
 import 'package:note_app_gsheet/notes_grid.dart';
-import 'package:note_app_gsheet/text_box.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,6 +28,17 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+// wait for the data to be fetched from google sheets
+  void startLoading() {
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if (GoogleSheetsApi.loading == false) {
+        setState(() {
+          timer.cancel();
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +53,10 @@ class _HomePageState extends State<HomePage> {
         ),
         backgroundColor: Colors.grey[200],
         body: Column(children: [
-          NotesGrid(),
+          Expanded(
+              child: GoogleSheetsApi.loading == true
+                  ? const LoadingCircle()
+                  : NotesGrid()),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
             child: Row(
@@ -71,17 +87,6 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.pink,
                       )),
                 )
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   children: [
-                //     const Text('@ c r e a t e d by s y s'),
-                //     ElevatedButton(
-                //         onPressed: () {
-                //           post();
-                //         },
-                //         child: const Text('POST'))
-                //   ],
-                // )
               ],
             ),
           ),
